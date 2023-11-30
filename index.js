@@ -23,6 +23,7 @@ const client = new MongoClient(uri, {
 });
 
 const UserCollection = client.db("SouthTechdb").collection("users");
+const WorkCollection = client.db("SouthTechdb").collection("worksheet");
 
 async function run() {
   try {
@@ -34,6 +35,27 @@ async function run() {
         const result = await UserCollection.insertOne(user);
           res.send(result);
         })
+
+        app.post('/worksheet', async(req,res) => {
+          const work = req.body;
+          const result = await WorkCollection.insertOne(work);
+            res.send(result);
+          })
+        app.get("/worksheet", async (req, res) => {
+            const result = await WorkCollection.find().toArray();
+            res.send(result);})
+
+            // app.get("/worksheet/:email", async (req, res) => {
+            //   const email = req.params.email
+            //   const result = await WorkCollection.find({userEmail: email}).toArray();
+            //   res.send(result);})
+            app.get("/worksheet/:name", async (req, res) => {
+              const name = req.params.name
+              const result = await WorkCollection.find({userName: name}).toArray();
+              res.send(result);})
+
+
+
         app.get("/users", async (req, res) => {
             const result = await UserCollection.find().toArray();
             res.send(result);})
@@ -58,6 +80,24 @@ async function run() {
               res.send(result);
               console.log(req.body);
             });
+
+            app.put("/users/:id", async (req, res) => {
+              const id = req.params.id;
+              const filter = { _id: new ObjectId(id) };
+              const option = { upsert: true };
+              const verify = req.body;
+              const updatedverify = {
+                $set: {
+                  employeeRole: verify.isverified,
+                },
+              };
+              const result = await UserCollection.updateOne(filter, updatedDoc, option);
+              res.send(result);
+              console.log(req.body);
+            });
+
+
+           
 
 
          
