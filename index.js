@@ -24,6 +24,7 @@ const client = new MongoClient(uri, {
 
 const UserCollection = client.db("SouthTechdb").collection("users");
 const WorkCollection = client.db("SouthTechdb").collection("worksheet");
+const paymentCollection = client.db("SouthTechdb").collection("payment");
 
 async function run() {
   try {
@@ -35,6 +36,16 @@ async function run() {
         const result = await UserCollection.insertOne(user);
           res.send(result);
         })
+
+        app.post('/payments', async(req,res) => {
+          const user = req.body;
+          const result = await paymentCollection.insertOne(user);
+            res.send(result);
+          })
+
+          app.get("/payments", async (req, res) => {
+            const result = await paymentCollection.find().toArray();
+            res.send(result);})
 
         app.post('/worksheet', async(req,res) => {
           const work = req.body;
